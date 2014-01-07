@@ -36,6 +36,8 @@ best_doc = None
 best_dist = sys.maxint
 best_i = None
 
+print
+
 for i in range(0, num_samples):
 	post = posts[i] # iterate through the posts
 	if post == new_post:
@@ -47,4 +49,4 @@ for i in range(0, num_samples):
 		best_doc = post
 		best_dist = d
 		best_i = i
-print "The best post is '{0}' with dist={1}".format(best_doc, best_dist)
+print "The best post is {0}: '{1}' with dist={2}".format(best_i, best_doc, best_dist)
