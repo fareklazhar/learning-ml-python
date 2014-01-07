@@ -12,7 +12,8 @@ features = data['data']
 labels = data['target_names'][data['target']]
 
 
-setosa = (labels == 'setosa')
+setosa = (labels == 
+    'setosa')
 features = features[~setosa]
 labels = labels[~setosa]
 virginica = (labels == 'virginica')
