@@ -9,7 +9,8 @@ X = vectorizer.fit_transform(content)
 print vectorizer.get_feature_names()
 print X.toarray().transpose()
 
-DIR = "/learning-ml-python/ch03/data/toy"
+
+DIR = "/home/tom/learning-ml-python/ch03/data/toy"
 posts = [open(os.path.join(DIR, f)).read() for f in os.listdir(DIR)]
 
 X_train = vectorizer.fit_transform(posts)
