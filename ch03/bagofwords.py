@@ -2,7 +2,7 @@ import os
 import sys
 import scipy as sp
 from sklearn.feature_extraction.text import CountVectorizer
-vectorizer = CountVectorizer(min_df=1) # minimum document frequency
+vectorizer = CountVectorizer(min_df=1, stop_words="english") # minimum document frequency
 
 print vectorizer
 
