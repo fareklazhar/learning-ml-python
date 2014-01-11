@@ -2,8 +2,9 @@ import os
 import sys
 import scipy as sp
 from sklearn.feature_extraction.text import CountVectorizer
-from stemming import StemmedCountVectorizer
-vectorizer = StemmedCountVectorizer(min_df=1, stop_words="english") # minimum document frequency
+from stemming import StemmedCountVectorizer, StemmedTfidfVectorizer
+# vectorizer = StemmedCountVectorizer(min_df=1, stop_words="english") # minimum document frequency
+vectorizer = StemmedTfidfVectorizer(min_df=1, stop_words="english", charset_error="ignore")
 
 print vectorizer
 
