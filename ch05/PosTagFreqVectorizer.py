@@ -46,15 +46,14 @@ class PosCounter(Counter):
             for sent in other:
                 self.n_sents += 1
 
-                if self.poscache is not None:
-                    if sent in self.poscache:
-                        tags = self.poscache[sent]
-                    else:
-                        self.poscache[sent] = tags = nltk.pos_tag(
-                            nltk.word_tokenize(sent))
-                else:
+                if self.poscache is None:
                     tags = nltk.pos_tag(nltk.word_tokenize(sent))
 
+                elif sent in self.poscache:
+                    tags = self.poscache[sent]
+                else:
+                    self.poscache[sent] = tags = nltk.pos_tag(
+                        nltk.word_tokenize(sent))
                 for x in tags:
                     tok, tag = x
                     self[tag] += 1
@@ -83,7 +82,7 @@ class PosTagFreqVectorizer(BaseEstimator):
         if vocabulary is not None:
             self.fixed_vocabulary = True
             if not isinstance(vocabulary, Mapping):
-                vocabulary = dict((t, i) for i, t in enumerate(vocabulary))
+                vocabulary = {t: i for i, t in enumerate(vocabulary)}
             self.vocabulary_ = vocabulary
         else:
             self.fixed_vocabulary = False
@@ -134,8 +133,7 @@ class PosTagFreqVectorizer(BaseEstimator):
         elif self.strip_accents == 'unicode':
             strip_accents = strip_accents_unicode
         else:
-            raise ValueError('Invalid value for "strip_accents": %s' %
-                             self.strip_accents)
+            raise ValueError(f'Invalid value for "strip_accents": {self.strip_accents}')
 
         only_prose = lambda s: re.sub('<[^>]*>', '', s).replace("\n", " ")
 
@@ -171,9 +169,9 @@ class PosTagFreqVectorizer(BaseEstimator):
             term_count_dict.clear()
 
         shape = (len(term_count_dicts), max(vocabulary.values()) + 1)
-        spmatrix = sp.csr_matrix((values, (i_indices, j_indices)),
-                                 shape=shape, dtype=self.dtype)
-        return spmatrix
+        return sp.csr_matrix(
+            (values, (i_indices, j_indices)), shape=shape, dtype=self.dtype
+        )
 
     def fit(self, raw_documents, y=None):
         """Learn a vocabulary dictionary of all tokens in the raw documents
@@ -224,7 +222,7 @@ class PosTagFreqVectorizer(BaseEstimator):
         for doc in raw_documents:
             term_count_current = PosCounter(
                 analyze(doc), normalize=self.normalize, poscache=self.poscache)
-            term_counts.update(term_count_current)
+            term_counts |= term_count_current
 
             term_counts_per_doc.append(term_count_current)
 
@@ -237,7 +235,7 @@ class PosTagFreqVectorizer(BaseEstimator):
         # the mapping from feature name to indices might depend on the memory
         # layout of the machine. Furthermore sorted terms might make it
         # possible to perform binary search in the feature names array.
-        self.vocabulary_ = dict(((t, i) for i, t in enumerate(sorted(terms))))
+        self.vocabulary_ = {t: i for i, t in enumerate(sorted(terms))}
 
         return self._term_count_dicts_to_matrix(term_counts_per_doc)
 

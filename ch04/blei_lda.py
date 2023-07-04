@@ -35,7 +35,7 @@ model = models.ldamodel.LdaModel(
 for ti in xrange(84):
     words = model.show_topic(ti, 64)
     tf = sum(f for f, w in words)
-    print('\n'.join('{}:{}'.format(w, int(1000. * f / tf)) for f, w in words))
+    print('\n'.join(f'{w}:{int(1000.0 * f / tf)}' for f, w in words))
     print()
     print()
     print()

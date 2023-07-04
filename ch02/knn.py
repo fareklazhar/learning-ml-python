@@ -31,10 +31,9 @@ def apply_model(features, model):
     k, train_feats, labels = model
     results = []
     for f in features:
-        label_dist = []
-        # Compute all distances:
-        for t, ell in zip(train_feats, labels):
-            label_dist.append((np.linalg.norm(f - t), ell))
+        label_dist = [
+            (np.linalg.norm(f - t), ell) for t, ell in zip(train_feats, labels)
+        ]
         label_dist.sort(key=lambda d_ell: d_ell[0])
         label_dist = label_dist[:k]
         results.append(plurality([ell for _, ell in label_dist]))

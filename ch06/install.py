@@ -66,10 +66,8 @@ NOT_AUTHORIZED_ID_FILE = os.path.join(DATA_PATH, "not_authorized.tsv")
 
 def get_user_params(DATA_PATH):
 
-    user_params = {}
+    user_params = {'inList': os.path.join(DATA_PATH, 'corpus.csv')}
 
-    # get user input params
-    user_params['inList'] = os.path.join(DATA_PATH, 'corpus.csv')
     user_params['outList'] = os.path.join(DATA_PATH, 'full-corpus.csv')
     user_params['rawDir'] = os.path.join(DATA_PATH, 'rawdata/')
 

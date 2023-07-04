@@ -60,7 +60,7 @@ plot_models(x, y, None, os.path.join(CHART_DIR, "1400_01_01.png"))
 
 # create and plot models
 fp1, res, rank, sv, rcond = sp.polyfit(x, y, 1, full=True)
-print("Model parameters: %s" % fp1)
+print(f"Model parameters: {fp1}")
 print("Error of the model:", res)
 f1 = sp.poly1d(fp1)
 f2 = sp.poly1d(sp.polyfit(x, y, 2))

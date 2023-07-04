@@ -56,8 +56,9 @@ emo_repl = {
     ":-S": " bad ",
 }
 
-emo_repl_order = [k for (k_len, k) in reversed(
-    sorted([(len(k), k) for k in emo_repl.keys()]))]
+emo_repl_order = [
+    k for (k_len, k) in reversed(sorted([(len(k), k) for k in emo_repl]))
+]
 
 re_repl = {
     r"\br\b": "are",
@@ -177,9 +178,7 @@ def get_best_model():
                        clf__alpha=0.01,
                        )
 
-    best_clf = create_ngram_model(best_params)
-
-    return best_clf
+    return create_ngram_model(best_params)
 
 if __name__ == "__main__":
     X_orig, Y_orig = load_sanders_data()

@@ -115,6 +115,7 @@ def measure(clf_class, parameters, name, data_size=None, plot=False):
     pr_scores = []
     precisions, recalls, thresholds = [], [], []
 
+    label_idx = 1
     for train, test in cv:
         X_train, y_train = X[train], Y[train]
         X_test, y_test = X[test], Y[test]
@@ -132,7 +133,6 @@ def measure(clf_class, parameters, name, data_size=None, plot=False):
         scores.append(test_score)
         proba = clf.predict_proba(X_test)
 
-        label_idx = 1
         fpr, tpr, roc_thresholds = roc_curve(y_test, proba[:, label_idx])
         precision, recall, pr_thresholds = precision_recall_curve(
             y_test, proba[:, label_idx])
@@ -154,8 +154,13 @@ def measure(clf_class, parameters, name, data_size=None, plot=False):
 
     if plot:
         #plot_roc(roc_scores[medium], name, fprs[medium], tprs[medium])
-        plot_pr(pr_scores[medium], name, precisions[medium],
-                recalls[medium], classifying_answer + " answers")
+        plot_pr(
+            pr_scores[medium],
+            name,
+            precisions[medium],
+            recalls[medium],
+            f"{classifying_answer} answers",
+        )
 
         if hasattr(clf, 'coef_'):
             plot_feat_importance(feature_names, clf, name)
@@ -189,8 +194,13 @@ def bias_variance_analysis(clf_class, parameters, name):
         train_errors.append(train_error)
         test_errors.append(test_error)
 
-    plot_bias_variance(data_sizes, train_errors,
-                       test_errors, name, "Bias-Variance for '%s'" % name)
+    plot_bias_variance(
+        data_sizes,
+        train_errors,
+        test_errors,
+        name,
+        f"Bias-Variance for '{name}'",
+    )
 
 
 def k_complexity_analysis(clf_class, parameters):

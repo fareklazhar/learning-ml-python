@@ -52,12 +52,11 @@ def load_sanders_data(dirname=".", line_count=-1):
 
             topic, label, tweet_id = line
 
-            tweet_fn = os.path.join(
-                DATA_DIR, dirname, 'rawdata', '%s.json' % tweet_id)
+            tweet_fn = os.path.join(DATA_DIR, dirname, 'rawdata', f'{tweet_id}.json')
             try:
                 tweet = json.load(open(tweet_fn, "r"))
             except IOError:
-                print("Tweet '%s' not found. Skip."%tweet_fn)
+                print(f"Tweet '{tweet_fn}' not found. Skip.")
                 continue
 
             if 'text' in tweet and tweet['user']['lang'] == "en":
@@ -83,8 +82,10 @@ def plot_pr(auc_score, name, phase, precision, recall, label=None):
     pylab.ylabel('Precision')
     pylab.title('P/R curve (AUC=%0.2f) / %s' % (auc_score, label))
     filename = name.replace(" ", "_")
-    pylab.savefig(os.path.join(CHART_DIR, "pr_%s_%s.png" %
-                  (filename, phase)), bbox_inches="tight")
+    pylab.savefig(
+        os.path.join(CHART_DIR, f"pr_{filename}_{phase}.png"),
+        bbox_inches="tight",
+    )
 
 
 def show_most_informative_features(vectorizer, clf, n=20):
@@ -122,15 +123,17 @@ def plot_feat_importance(feature_names, clf, name):
     xpos = np.array(range(len(coef)))
     pylab.bar(xpos, coef, width=1)
 
-    pylab.title('Feature importance for %s' % (name))
+    pylab.title(f'Feature importance for {name}')
     ax = pylab.gca()
     ax.set_xticks(np.arange(len(coef)))
     labels = ax.set_xticklabels(f_imp)
     for label in labels:
         label.set_rotation(90)
     filename = name.replace(" ", "_")
-    pylab.savefig(os.path.join(
-        CHART_DIR, "feat_imp_%s.png" % filename), bbox_inches="tight")
+    pylab.savefig(
+        os.path.join(CHART_DIR, f"feat_imp_{filename}.png"),
+        bbox_inches="tight",
+    )
 
 
 def plot_feat_hist(data_name_list, filename=None):
@@ -148,19 +151,14 @@ def plot_feat_hist(data_name_list, filename=None):
             pylab.ylabel('Density')
             # the histogram of the data
             max_val = np.max(x)
-            if max_val <= 1.0:
-                bins = 50
-            elif max_val > 50:
-                bins = 50
-            else:
-                bins = max_val
+            bins = 50 if max_val <= 1.0 or max_val > 50 else max_val
             n, bins, patches = pylab.hist(
                 x, bins=bins, normed=1, facecolor='green', alpha=0.75)
 
             pylab.grid(True)
 
     if not filename:
-        filename = "feat_hist_%s.png" % name
+        filename = f"feat_hist_{name}.png"
 
     pylab.savefig(os.path.join(CHART_DIR, filename), bbox_inches="tight")
 
@@ -170,12 +168,12 @@ def plot_bias_variance(data_sizes, train_errors, test_errors, name):
     pylab.ylim([0.0, 1.0])
     pylab.xlabel('Data set size')
     pylab.ylabel('Error')
-    pylab.title("Bias-Variance for '%s'" % name)
+    pylab.title(f"Bias-Variance for '{name}'")
     pylab.plot(
         data_sizes, train_errors, "-", data_sizes, test_errors, "--", lw=1)
     pylab.legend(["train error", "test error"], loc="upper right")
     pylab.grid()
-    pylab.savefig(os.path.join(CHART_DIR, "bv_" + name + ".png"))
+    pylab.savefig(os.path.join(CHART_DIR, f"bv_{name}.png"))
 
 
 def load_sent_word_net():
@@ -198,7 +196,7 @@ def load_sent_word_net():
                 # drop #number at the end of every term
                 term = term.split("#")[0]
                 term = term.replace("-", " ").replace("_", " ")
-                key = "%s/%s" % (POS, term.split("#")[0])
+                key = f'{POS}/{term.split("#")[0]}'
                 sent_scores[key].append((float(PosScore), float(NegScore)))
     for key, value in sent_scores.iteritems():
         sent_scores[key] = np.mean(value, axis=0)

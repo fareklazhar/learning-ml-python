@@ -34,8 +34,7 @@ def create_ngram_model():
     tfidf_ngrams = TfidfVectorizer(ngram_range=(1, 3),
                                    analyzer="word", binary=False)
     clf = MultinomialNB()
-    pipeline = Pipeline([('vect', tfidf_ngrams), ('clf', clf)])
-    return pipeline
+    return Pipeline([('vect', tfidf_ngrams), ('clf', clf)])
 
 
 def train_model(clf_factory, X, Y, name="NB ngram", plot=False):

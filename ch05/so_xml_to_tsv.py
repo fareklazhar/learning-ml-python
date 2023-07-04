@@ -109,8 +109,7 @@ def parsexml(filename):
                 ParentId = -1
                 TimeToAnswer = 0
                 q_creation[Id] = creation_date
-                accepted = elem.get('AcceptedAnswerId')
-                if accepted:
+                if accepted := elem.get('AcceptedAnswerId'):
                     q_accepted[Id] = int(accepted)
                 IsAccepted = 0
 
@@ -118,17 +117,13 @@ def parsexml(filename):
                 num_answers += 1
 
                 ParentId = int(elem.get('ParentId'))
-                if not ParentId in q_creation:
+                if ParentId not in q_creation:
                     # question was too far in the past
                     continue
 
                 TimeToAnswer = (creation_date - q_creation[ParentId]).seconds
 
-                if ParentId in q_accepted:
-                    IsAccepted = int(q_accepted[ParentId] == Id)
-                else:
-                    IsAccepted = 0
-
+                IsAccepted = int(q_accepted[ParentId] == Id) if ParentId in q_accepted else 0
                 meta[ParentId].append((Id, IsAccepted, TimeToAnswer, Score))
 
             else:
@@ -137,14 +132,18 @@ def parsexml(filename):
             Text, NumTextTokens, NumCodeLines, LinkCount, NumImages = filter_html(
                 elem.get('Body'))
 
-            values = (Id, ParentId,
-                      IsAccepted,
-                      TimeToAnswer, Score,
-                      Text.encode("utf-8"),
-                      NumTextTokens, NumCodeLines, LinkCount, NumImages)
-
-            yield values
-
+            yield (
+                Id,
+                ParentId,
+                IsAccepted,
+                TimeToAnswer,
+                Score,
+                Text.encode("utf-8"),
+                NumTextTokens,
+                NumCodeLines,
+                LinkCount,
+                NumImages,
+            )
             root.clear()  # preserve memory
 
 with open(os.path.join(DATA_DIR, filename_filtered), "w") as f:

@@ -61,14 +61,13 @@ class LinguisticVectorizer(BaseEstimator):
     def _get_sentiments(self, d):
         # http://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
         sent = tuple(nltk.word_tokenize(d))
-        if poscache is not None:
-            if d in poscache:
-                tagged = poscache[d]
-            else:
-                poscache[d] = tagged = nltk.pos_tag(sent)
-        else:
+        if poscache is None:
             tagged = nltk.pos_tag(sent)
 
+        elif d in poscache:
+            tagged = poscache[d]
+        else:
+            poscache[d] = tagged = nltk.pos_tag(sent)
         pos_vals = []
         neg_vals = []
 
@@ -94,7 +93,7 @@ class LinguisticVectorizer(BaseEstimator):
                 adverbs += 1
 
             if sent_pos_type is not None:
-                sent_word = "%s/%s" % (sent_pos_type, w)
+                sent_word = f"{sent_pos_type}/{w}"
 
                 if sent_word in sent_word_net:
                     p, n = sent_word_net[sent_word]
@@ -124,11 +123,20 @@ class LinguisticVectorizer(BaseEstimator):
             exclamation.append(d.count("!"))
             question.append(d.count("?"))
 
-        result = np.array(
-            [obj_val, pos_val, neg_val, nouns, adjectives, verbs, adverbs, allcaps,
-             exclamation, question]).T
-
-        return result
+        return np.array(
+            [
+                obj_val,
+                pos_val,
+                neg_val,
+                nouns,
+                adjectives,
+                verbs,
+                adverbs,
+                allcaps,
+                exclamation,
+                question,
+            ]
+        ).T
 
 emo_repl = {
     # positive emoticons
@@ -152,8 +160,9 @@ emo_repl = {
     ":-S": " bad ",
 }
 
-emo_repl_order = [k for (k_len, k) in reversed(
-    sorted([(len(k), k) for k in emo_repl.keys()]))]
+emo_repl_order = [
+    k for (k_len, k) in reversed(sorted([(len(k), k) for k in emo_repl]))
+]
 
 re_repl = {
     r"\br\b": "are",
@@ -302,9 +311,7 @@ def get_best_model():
                        clf__alpha=0.01,
                        )
 
-    best_clf = create_union_model(best_params)
-
-    return best_clf
+    return create_union_model(best_params)
 
 if __name__ == "__main__":
     X_orig, Y_orig = load_sanders_data()

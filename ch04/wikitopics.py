@@ -29,7 +29,7 @@ print(np.mean(lens <= 10))
 print(np.mean(lens))
 
 counts = np.zeros(100)
-for doc_top in topics:
+for _ in topics:
     for ti, _ in doc_toc:
         counts[ti] += 1
 

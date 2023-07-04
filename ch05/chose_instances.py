@@ -37,10 +37,10 @@ filtered_meta = json.load(open(filtered_meta, "r"))
 
 
 def misspelled_fraction(p):
-    tokens = p.split()
-    if not tokens:
+    if tokens := p.split():
+        return 1 - float(sum(speller.check(t) for t in tokens)) / len(tokens)
+    else:
         return 0.0
-    return 1 - float(sum(speller.check(t) for t in tokens)) / len(tokens)
 
 
 def data(filename, col=None):
@@ -90,7 +90,7 @@ for ParentId, posts in filtered_meta.items():
         continue
 
     ParentId = int(ParentId)
-    AllIds = set([ParentId])
+    AllIds = {ParentId}
     AcceptedId = None
     UnacceptedId = None
     UnacceptedIds = []
